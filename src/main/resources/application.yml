@@ -1,0 +1,3 @@
+flowable:
+  process-definition-location-prefix: classpath*:/processes/
+  process-definition-location-suffixes: templates/*.bpmn,flows/*.bpmn,steps/*/*.bpmn

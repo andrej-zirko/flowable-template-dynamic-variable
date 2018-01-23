@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.zirko.eu/step">
+  <process id="positiveStepProcess" name="Positive Step Process" isExecutable="true">
+    <startEvent id="simpleStepImplStartEvent" name="Start"></startEvent>
+    <endEvent id="simpleStepImplEndEvent" name="End"></endEvent>
+    <sequenceFlow id="flow1" sourceRef="simpleStepImplStartEvent" targetRef="setResultVariablesTask"></sequenceFlow>
+    <scriptTask id="setResultVariablesTask" name="Set Result Variables" scriptFormat="javascript" activiti:autoStoreVariables="false">
+      <script><![CDATA[print("Setting result variables in positive step");
+execution.setVariable('resultVariable1', execution.getVariable('testVariable1'));
+execution.setVariable('resultVariable2', execution.getVariable('testVariable2'));]]></script>
+    </scriptTask>
+    <sequenceFlow id="flow2" sourceRef="setResultVariablesTask" targetRef="simpleStepImplEndEvent"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_positiveStepProcess">
+    <bpmndi:BPMNPlane bpmnElement="positiveStepProcess" id="BPMNPlane_positiveStepProcess">
+      <bpmndi:BPMNShape bpmnElement="simpleStepImplStartEvent" id="BPMNShape_simpleStepImplStartEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="79.0" y="178.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="simpleStepImplEndEvent" id="BPMNShape_simpleStepImplEndEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="300.0" y="178.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="setResultVariablesTask" id="BPMNShape_setResultVariablesTask">
+        <omgdc:Bounds height="65.0" width="105.0" x="160.0" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="114.0" y="195.0"></omgdi:waypoint>
+        <omgdi:waypoint x="160.0" y="195.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="265.0" y="195.0"></omgdi:waypoint>
+        <omgdi:waypoint x="300.0" y="195.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

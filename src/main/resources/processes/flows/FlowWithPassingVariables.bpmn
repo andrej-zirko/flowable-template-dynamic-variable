@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.zirko.eu/flow">
+  <process id="flowWithPassingVariablesProcess" name="Flow With Passing Variables Process" isExecutable="true">
+    <callActivity id="callPositiveStep" name="Call Positive Step" calledElement="stepTemplateProcess" activiti:inheritVariables="false">
+      <extensionElements>
+        <activiti:in sourceExpression="positiveStepProcess" target="stepImplProcessKey"></activiti:in>
+        <activiti:in source="flowEvent" target="flowEvent"></activiti:in>
+        <activiti:in source="testVariable1" target="testVariable1"></activiti:in>
+        <activiti:in source="testVariable2" target="testVariable2"></activiti:in>
+        <activiti:out source="resultVariable1" target="resultVariable1"></activiti:out>
+        <activiti:out source="resultVariable2" target="resultVariable2"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <startEvent id="startevent2" name="Start"></startEvent>
+    <sequenceFlow id="flow3" sourceRef="startevent2" targetRef="setTestVariablesTask"></sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="callPositiveStep" targetRef="endevent1"></sequenceFlow>
+    <scriptTask id="setTestVariablesTask" name="Set Test Variables" scriptFormat="javascript" activiti:autoStoreVariables="false">
+      <script><![CDATA[print("Setting flow variables...");
+execution.setVariable("testVariable1", "testVariableContent1");
+execution.setVariable("testVariable2", "testVariableContent2");]]></script>
+    </scriptTask>
+    <sequenceFlow id="flow5" sourceRef="setTestVariablesTask" targetRef="callPositiveStep"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_flowWithPassingVariablesProcess">
+    <bpmndi:BPMNPlane bpmnElement="flowWithPassingVariablesProcess" id="BPMNPlane_flowWithPassingVariablesProcess">
+      <bpmndi:BPMNShape bpmnElement="callPositiveStep" id="BPMNShape_callPositiveStep">
+        <omgdc:Bounds height="65.0" width="105.0" x="500.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="650.0" y="235.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent2" id="BPMNShape_startevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="250.0" y="235.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="setTestVariablesTask" id="BPMNShape_setTestVariablesTask">
+        <omgdc:Bounds height="65.0" width="105.0" x="342.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="285.0" y="252.0"></omgdi:waypoint>
+        <omgdi:waypoint x="342.0" y="252.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="605.0" y="252.0"></omgdi:waypoint>
+        <omgdi:waypoint x="650.0" y="252.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="447.0" y="252.0"></omgdi:waypoint>
+        <omgdi:waypoint x="500.0" y="252.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

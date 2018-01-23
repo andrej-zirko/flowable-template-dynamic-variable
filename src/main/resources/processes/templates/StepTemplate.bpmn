@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.zirko.eu/step/template">
+  <process id="stepTemplateProcess" name="Step template process" isExecutable="true">
+    <subProcess id="stepTemplateSubprocess" name="Step Template">
+      <startEvent id="stepTemplateSubprocessStartEvent" name="Step Template Subprocess Start Event"></startEvent>
+      <endEvent id="stepTemplateSubprocessEndEvent" name="Step Template Subprocess End Event"></endEvent>
+      <callActivity id="callStepImpl" name="Call Step Implementation" calledElement="${stepImplProcessKey}" activiti:inheritVariables="false">
+        <extensionElements>
+          <activiti:executionListener event="start" delegateExpression="${stepImplCallParametersListener}"></activiti:executionListener>
+        </extensionElements>
+      </callActivity>
+      <sequenceFlow id="createTransactionUnitTaskFlow" sourceRef="stepTemplateSubprocessStartEvent" targetRef="stepInitTask"></sequenceFlow>
+      <sequenceFlow id="addTransactionUnitToListTaskFlow" sourceRef="callStepImpl" targetRef="stepEndTask"></sequenceFlow>
+      <scriptTask id="stepInitTask" name="Step Init" scriptFormat="javascript" activiti:autoStoreVariables="false">
+        <script><![CDATA[print("Step init…");]]></script>
+      </scriptTask>
+      <sequenceFlow id="flow1" sourceRef="stepInitTask" targetRef="callStepImpl"></sequenceFlow>
+      <scriptTask id="stepEndTask" name="Step End" scriptFormat="javascript" activiti:autoStoreVariables="false">
+        <script><![CDATA[print("Step end…");]]></script>
+      </scriptTask>
+      <sequenceFlow id="flow2" sourceRef="stepEndTask" targetRef="stepTemplateSubprocessEndEvent"></sequenceFlow>
+    </subProcess>
+    <boundaryEvent id="stepTemplateSubprocessBoundaryError" name="Step Template Subprocess Boundary Error" attachedToRef="stepTemplateSubprocess">
+      <errorEventDefinition></errorEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="callStepErrorHandlingFlow" sourceRef="stepTemplateSubprocessBoundaryError" targetRef="stepErrorHandlingTask"></sequenceFlow>
+    <startEvent id="stepTemplateProcessStartEvent" name="Step Template Process Start Event"></startEvent>
+    <sequenceFlow id="stepTemplateSubprocessFlow" sourceRef="stepTemplateProcessStartEvent" targetRef="stepTemplateSubprocess"></sequenceFlow>
+    <endEvent id="stepTemplateProcessEndEvent" name="Step Template Process End Event"></endEvent>
+    <sequenceFlow id="stepTemplateProcessEndEventFlow" sourceRef="stepTemplateSubprocess" targetRef="stepTemplateProcessEndEvent"></sequenceFlow>
+    <sequenceFlow id="replyFlow" name="reply" sourceRef="shouldReplyExclusiveGateway" targetRef="stepTemplateSubprocess">
+      <documentation>If the error was not propagated further via throw</documentation>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${shouldReplyStep}]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="shouldReplyExclusiveGateway" name="Should Reply Exclusive Gateway" default="cancelFlow"></exclusiveGateway>
+    <sequenceFlow id="shouldReplyExclusiveGatewayFlow" sourceRef="stepErrorHandlingTask" targetRef="shouldReplyExclusiveGateway"></sequenceFlow>
+    <sequenceFlow id="cancelFlow" name="cancel (default)" sourceRef="shouldReplyExclusiveGateway" targetRef="stepErrorEndEvent"></sequenceFlow>
+    <endEvent id="stepErrorEndEvent" name="StepErrorEnd">
+      <errorEventDefinition></errorEventDefinition>
+    </endEvent>
+    <scriptTask id="stepErrorHandlingTask" name="Step Error Handling Task" scriptFormat="javascript" activiti:autoStoreVariables="false">
+      <script><![CDATA[print("Error handling implementation…");]]></script>
+    </scriptTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_stepTemplateProcess">
+    <bpmndi:BPMNPlane bpmnElement="stepTemplateProcess" id="BPMNPlane_stepTemplateProcess">
+      <bpmndi:BPMNShape bpmnElement="stepTemplateSubprocess" id="BPMNShape_stepTemplateSubprocess">
+        <omgdc:Bounds height="205.0" width="691.0" x="110.0" y="60.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepTemplateSubprocessStartEvent" id="BPMNShape_stepTemplateSubprocessStartEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="120.0" y="162.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepTemplateSubprocessEndEvent" id="BPMNShape_stepTemplateSubprocessEndEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="720.0" y="162.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callStepImpl" id="BPMNShape_callStepImpl">
+        <omgdc:Bounds height="71.0" width="105.0" x="400.0" y="142.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepInitTask" id="BPMNShape_stepInitTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="220.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepEndTask" id="BPMNShape_stepEndTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="550.0" y="152.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepTemplateSubprocessBoundaryError" id="BPMNShape_stepTemplateSubprocessBoundaryError">
+        <omgdc:Bounds height="30.0" width="30.0" x="381.0" y="250.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepTemplateProcessStartEvent" id="BPMNShape_stepTemplateProcessStartEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="28.0" y="147.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepTemplateProcessEndEvent" id="BPMNShape_stepTemplateProcessEndEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="860.0" y="145.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="shouldReplyExclusiveGateway" id="BPMNShape_shouldReplyExclusiveGateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="376.0" y="447.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepErrorEndEvent" id="BPMNShape_stepErrorEndEvent">
+        <omgdc:Bounds height="35.0" width="35.0" x="850.0" y="453.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="stepErrorHandlingTask" id="BPMNShape_stepErrorHandlingTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="344.0" y="340.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="createTransactionUnitTaskFlow" id="BPMNEdge_createTransactionUnitTaskFlow">
+        <omgdi:waypoint x="155.0" y="179.0"></omgdi:waypoint>
+        <omgdi:waypoint x="220.0" y="177.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="addTransactionUnitToListTaskFlow" id="BPMNEdge_addTransactionUnitToListTaskFlow">
+        <omgdi:waypoint x="505.0" y="177.0"></omgdi:waypoint>
+        <omgdi:waypoint x="550.0" y="179.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="325.0" y="177.0"></omgdi:waypoint>
+        <omgdi:waypoint x="400.0" y="177.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="655.0" y="179.0"></omgdi:waypoint>
+        <omgdi:waypoint x="720.0" y="179.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="callStepErrorHandlingFlow" id="BPMNEdge_callStepErrorHandlingFlow">
+        <omgdi:waypoint x="396.0" y="280.0"></omgdi:waypoint>
+        <omgdi:waypoint x="396.0" y="340.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="stepTemplateSubprocessFlow" id="BPMNEdge_stepTemplateSubprocessFlow">
+        <omgdi:waypoint x="63.0" y="164.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="162.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="stepTemplateProcessEndEventFlow" id="BPMNEdge_stepTemplateProcessEndEventFlow">
+        <omgdi:waypoint x="801.0" y="162.0"></omgdi:waypoint>
+        <omgdi:waypoint x="860.0" y="162.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="replyFlow" id="BPMNEdge_replyFlow">
+        <omgdi:waypoint x="376.0" y="467.0"></omgdi:waypoint>
+        <omgdi:waypoint x="77.0" y="467.0"></omgdi:waypoint>
+        <omgdi:waypoint x="77.0" y="200.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="162.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="24.0" x="376.0" y="467.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="shouldReplyExclusiveGatewayFlow" id="BPMNEdge_shouldReplyExclusiveGatewayFlow">
+        <omgdi:waypoint x="396.0" y="395.0"></omgdi:waypoint>
+        <omgdi:waypoint x="396.0" y="447.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="cancelFlow" id="BPMNEdge_cancelFlow">
+        <omgdi:waypoint x="416.0" y="467.0"></omgdi:waypoint>
+        <omgdi:waypoint x="850.0" y="470.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="76.0" x="416.0" y="467.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
